@@ -18,46 +18,80 @@
 	var canvas = document.getElementById("myCanvas");
 	if(canvas.getContext){
 		var context = canvas.getContext("2d");
+		context.clearRect(0,0,500,500); // clear canvas
 		var width = canvas.width;
 		var height = canvas.height;
 		var originX = width / 2;
 		var originY = height / 2;
 		console.log("坐标系原点为：(" + originX + "," + originY + ")");
 		
+		//画坐标
+		context.strokeStyle = "#000000";
 	    context.moveTo(0, originY);
 	    context.lineTo(width,originY);
-	    context.strokeStyle = "black";
 	    context.stroke();
 	    
 	    context.moveTo(originX, 0);
 	    context.lineTo(originX, height);
-	    context.strokeStyle = "black";
-	    context.stroke();
-		    
+	   	context.stroke();
+		
+		//画背景圆
+		context.beginPath();
+		context.strokeStyle = "#666666";
+		for(let i=1; i<5; i++){
+			context.arc(originX,originY,i * 50,0,2*Math.PI);
+		}
+		context.stroke();
+		
 	    //r=a(1-sinθ)
-	    var num = 100;
-	    var a = 100;
+	    const num = 100;
+	    const a = 100;
+
 	    var lastx = originX + a;
 	    var lasty = originY;
 	    var i = 1;
 
-	    window.requestAnimationFrame(draw);
+	    var drawId = requestAnimationFrame(draw);
+	    
+
         function draw(){
-      		let theta = 2 * Math.PI * i / num;
+        	console.log("drawId = " + drawId);
+
+      		let theta = 2 * Math.PI * (i % num) / num;
       		let r = a * (1 - Math.sin(theta));
 	      	let x = r * Math.cos(theta) + originX;
 	      	let y = originY - r * Math.sin(theta);
 	      	
 	      	context.beginPath();
-	      	context.moveTo(lastx, lasty);
-	  	  	context.lineTo(x, y);
-	  	  	context.strokeStyle = "red";
-	  	  	context.stroke();
-	  	  	lastx = x;
-	  	  	lasty = y; 
-	  	  	i++;
-	  	  	window.requestAnimationFrame(draw);
-      	}
+	      	if(i < num ){
+	      		context.moveTo(lastx, lasty);
+	  	  		context.lineTo(x, y);
+	  	  		context.strokeStyle = "red";
+	  	  		context.stroke();
+	  	  		lastx = x;
+	  	  		lasty = y; 
+	      	}
+	      	else if(i == num){
+	      		console.log("############");
+	      	}
+      		else if(i < 2 * num ){
+	      		context.moveTo(lastx, lasty);
+	      		console.log("lastx = " + lastx + ", lasty = " + lasty);
+	      		context.lineTo(x, y);
+	      		context.strokeStyle = "red";
+	  	  		context.stroke();
+	      	}
+
+	      	i++;
+	  	  	console.log("i = " + i);
+	  	  	if(i <= 2* num){
+	  	  		drawId = requestAnimationFrame(draw);
+	  	  	}
+	  	  	else{
+	  	  		cancelAnimationFrame(drawId);
+	  	  	}
+	  	}
+
     }
 	
 </script>
